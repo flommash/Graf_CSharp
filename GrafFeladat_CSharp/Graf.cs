@@ -63,6 +63,167 @@ namespace GrafFeladat_CSharp
             elek.Add(new El(cs1, cs2));
             elek.Add(new El(cs2, cs1));
         }
+        public void SzelessegBejar(int kezdes)
+        {
+            var bejart = new HashSet<int>();
+            var kovetkezo = new Queue<int>();
+
+            kovetkezo.Enqueue(kezdes);
+
+            bejart.Add(kezdes);
+
+            while (kovetkezo.Count > 0)
+            {
+                var k = kovetkezo.Dequeue();
+
+                Console.WriteLine(this.csucsok[k]);
+
+                foreach (El el in this.elek)
+                {
+                    if ((el.Csucs1 == k) && (!bejart.Contains(el.Csucs2)))
+                    {
+                        bejart.Add(el.Csucs2);
+                        kovetkezo.Enqueue(el.Csucs2);
+                    }
+                }
+            }
+        }
+        public void MelysegBejar(int kezdes)
+        {
+            var bejart = new HashSet<int>();
+            var kovetkezo = new Stack<int>();
+
+            kovetkezo.Push(kezdes);
+
+            bejart.Add(kezdes);
+
+            while (kovetkezo.Count > 0)
+            {
+                var k = kovetkezo.Pop();
+
+                Console.WriteLine(this.csucsok[k]);
+
+                foreach (El el in this.elek)
+                {
+                    if ((el.Csucs1 == k) && (!bejart.Contains(el.Csucs2)))
+                    {
+                        bejart.Add(el.Csucs2);
+                        kovetkezo.Push(el.Csucs2);
+                    }
+                }
+            }
+        }
+
+        public bool Osszefuggo()
+        {
+            var bejart = new HashSet<int>();
+            var kovetkezo = new Queue<int>();
+
+            kovetkezo.Enqueue(0);
+
+            bejart.Add(0);
+
+            while (kovetkezo.Count > 0)
+            {
+                var k = kovetkezo.Dequeue();
+
+                foreach (El el in this.elek)
+                {
+                    if ((el.Csucs1 == k) && (!bejart.Contains(el.Csucs2)))
+                    {
+                        bejart.Add(el.Csucs2);
+                        kovetkezo.Enqueue(el.Csucs2);
+                    }
+                }
+            }
+            if (bejart.Count == this.csucsokSzama)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public Graf Feszitofa()
+        {
+            var fa = new Graf(this.csucsokSzama);
+            var bejart = new HashSet<int>();
+            var kovetkezo = new Queue<int>();
+
+            kovetkezo.Enqueue(0);
+
+            bejart.Add(0);
+
+            while (kovetkezo.Count > 0)
+            {
+                var k = kovetkezo.Dequeue();
+                Console.WriteLine(this.csucsok[k]);
+
+                foreach (El el in this.elek)
+                {
+                    if ((el.Csucs1 == k) && (!bejart.Contains(el.Csucs2)))
+                    {
+                        bejart.Add(el.Csucs2);
+                        kovetkezo.Enqueue(el.Csucs2);
+                        fa.Hozzaad(el.Csucs1, el.Csucs2);
+                    }
+                }
+            }
+            return fa;
+        }
+
+        public Dictionary<int, int> mohoAlgoritmus()
+        {
+            var szinezes = new Dictionary<int, int>();
+            int maxSzin = this.csucsokSzama;
+
+            for (int aktCsucs = 0; aktCsucs < this.csucsokSzama; aktCsucs++)
+            {
+                var szinek = new HashSet<int>();
+
+                for (int i = 0; i < this.csucsokSzama; i++)
+                {
+                    szinek.Add(i);
+                }
+
+                foreach (El el in this.elek)
+                {
+                    if (el.Csucs1 == aktCsucs)
+                    {
+                        if (szinezes.ContainsKey(el.Csucs2))
+                        {
+                            var szin = szinezes[el.Csucs2];
+                            szinek.Remove(szin);
+                        }
+                    }
+                }
+
+                var valasztottSzin = Min(szinek);
+                szinezes.Add(aktCsucs, valasztottSzin);
+            }
+
+            return szinezes;
+        }
+
+        public int Min(HashSet<int> halmaz)
+        {
+            int min = int.MaxValue;
+
+            foreach (int elem in halmaz)
+            {
+                if (elem < min)
+                {
+                    min = elem;
+                }
+            }
+
+            return min;
+        }
+
+
+
 
         public override string ToString()
         {
